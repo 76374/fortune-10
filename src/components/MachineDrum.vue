@@ -35,8 +35,8 @@ defineExpose({
       '.result-ticket',
       {
         duration: ticketFlyTime,
-        y: -35,
-        ease: CustomEase.create('custom', '.3,-3,.51,5.5'),
+        y: -30,
+        ease: CustomEase.create('custom', '.3,-7,.51,12'),
         // ease: 'back.inOut',
         onComplete: () => emit('complete'),
       },
@@ -67,16 +67,21 @@ defineExpose({
 }
 
 .result-ticket {
-  background-color: #a9d6e5;
+  /*background-color: #a9d6e5;
+  border: 20px solid var(--primary-color);*/
+  background-image: url("img/ticket.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+
   position: absolute;
-  width: 450px;
-  height: 300px;
-  border: 20px solid var(--primary-color);
+  width: 442px;
+  height: 228px;
   text-align: center;
   align-content: center;
-  font-size: 10em;
+  font-size: 6em;
+  color: #240046;;
   font-weight: bold;
-  top: 50px;
+  top: 100px;
   left: 50%;
   transform: translate(-50%, 0);
 }

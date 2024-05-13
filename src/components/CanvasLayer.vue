@@ -1,55 +1,67 @@
 <script setup lang="ts">
+import getParticles from '@/canvas/particles';
+import { getWinStars } from '@/canvas/particles/win-stars';
 import useGameStore from '@/composables/store';
-import { Application, Assets, Sprite } from 'pixi.js';
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
 
 const containerRef = ref<HTMLElement | null>(null);
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const particles = shallowRef<ReturnType<typeof getParticles> | null>(null);
 
-const isVisible = ref(false);
+// const isVisible = ref(false);
 
 const gameStore = useGameStore();
 
 watch(
   () => gameStore.state,
   (state) => {
-    if (state === "win") {
-      isVisible.value = true;
+    if (state === 'win') {
+      // isVisible.value = true;
+      if (particles.value) {
+        particles.value.play('starsTop');
+        particles.value.play('starsBottom');
+        particles.value.play('starsLeft');
+        particles.value.play('starsRight');
+      }
+
       setTimeout(() => gameStore.setReady(), 2000);
-    } else if (state === "ticketsPurchase") {
-      isVisible.value = false;
+    } else if (state === 'ticketsPurchase') {
+      // isVisible.value = false;
     }
   }
 );
 
 onMounted(async () => {
   const containerEl = containerRef.value;
-  if (!containerEl) {
+  const canvasEl = canvasRef.value;
+  if (!containerEl || !canvasEl) {
     return;
   }
-  const app = new Application();
 
-  await app.init({ backgroundAlpha: 0, resizeTo: containerEl });
+  // to update canvas size first
+  requestAnimationFrame(() => {
+    particles.value = getParticles(canvasEl);
 
-  containerEl.appendChild(app.canvas);
-
-  const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
-  const bunny = new Sprite(texture);
-
-  bunny.anchor.set(0.5);
-
-  bunny.x = app.screen.width / 2;
-  bunny.y = app.screen.height / 2;
-
-  app.stage.addChild(bunny);
-
-  app.ticker.add((time) => {
-    bunny.rotation += 0.1 * time.deltaTime;
+    particles.value.addParticles(getWinStars({ x: 360, y: 50, w: 490, h: 0 }, 0), 'starsTop');
+    particles.value.addParticles(getWinStars({ x: 360, y: 380, w: 490, h: 0 }, 180), 'starsBottom');
+    particles.value.addParticles(getWinStars({ x: 360, y: 50, w: 0, h: 380 }, -90), 'starsLeft');
+    particles.value.addParticles(getWinStars({ x: 850, y: 50, w: 0, h: 380 }, 90), 'starsRight');
   });
+});
+
+onBeforeUnmount(() => {
+  particles.value?.destroy();
 });
 </script>
 
 <template>
-  <div v-show="isVisible" class="canvas-layer" ref="containerRef" />
+  <div class="canvas-layer" ref="containerRef">
+    <canvas
+      ref="canvasRef"
+      :width="containerRef?.offsetWidth"
+      :height="containerRef?.offsetHeight"
+    />
+  </div>
 </template>
 
 <style scoped>

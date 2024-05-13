@@ -2,9 +2,8 @@
 import CanvasLayer from '@/components/CanvasLayer.vue';
 import GamePanel from '@/components/GamePanel.vue';
 import MachineDrum from '@/components/MachineDrum.vue';
-import useGameStore from '@/composables/store';
-import currencyFormat from '@/services/format/currency-format';
 import TicketsPurchase from '@/components/TicketsPurchase.vue';
+import useGameStore from '@/composables/store';
 import { onMounted, ref, watch } from 'vue';
 
 const gameStore = useGameStore();
@@ -13,8 +12,11 @@ const drumRef = ref<InstanceType<typeof MachineDrum> | null>(null);
 
 watch(
   () => gameStore.state,
-  (state) => {
-    if (state === 'roundStart' && drumRef.value) {
+  (state, prevState) => {
+    if (
+      drumRef.value &&
+      (state === 'roundStart' || (state === 'resultsReady' && prevState === 'ticketSelected'))
+    ) {
       drumRef.value.spin();
     }
   }
@@ -25,9 +27,7 @@ const handleRoundAnimationComplete = () => {
 };
 
 onMounted(() => {
-  gameStore.init().then((result) => {
-    currencyFormat.setCurrency(result.currency);
-  });
+  gameStore.init();
 });
 </script>
 
@@ -40,8 +40,8 @@ onMounted(() => {
         :ticket-number="gameStore.resultTicketNumber"
         @complete="handleRoundAnimationComplete"
       />
-      <TicketsPurchase v-if="gameStore.state === 'ticketsPurchase'" />
       <CanvasLayer />
+      <TicketsPurchase v-if="gameStore.state === 'ticketsPurchase' || gameStore.state === 'ticketSelected'" />
     </div>
   </div>
 </template>

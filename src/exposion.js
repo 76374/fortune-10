@@ -29,7 +29,6 @@
       this.emitter = null;
       this.renderer = new PIXI.Renderer(rendererOptions);
       this.bg = null;
-      this.updateHook = null;
       this.containerHook = null;
 
       const framerate = document.getElementById('framerate');
@@ -51,12 +50,6 @@
         {
           // update emitter (convert to seconds)
           this.emitter.update((now - elapsed) * 0.001);
-        }
-
-        // call update hook for specialist examples
-        if (this.updateHook)
-        {
-          this.updateHook(now - elapsed);
         }
 
         framerate.innerHTML = `${(1000 / (now - elapsed)).toFixed(2)} fps`;
