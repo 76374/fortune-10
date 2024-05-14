@@ -5,10 +5,10 @@ type Rect = {
   h: number;
 };
 
-export const getWinStars = (rect: Rect, rotation = 0) => ({
+export const getWinStars = (rect: Rect, rotation: number, duration: number) => ({
   lifetime: { min: 4, max: 4 },
-  frequency: 0.001,
-  emitterLifetime: 0.3,
+  frequency: 0.002,
+  emitterLifetime: duration,
   maxParticles: 1000,
   addAtBack: false,
   pos: { x: 0, y: 0 },

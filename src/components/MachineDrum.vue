@@ -5,7 +5,7 @@ import { ref } from 'vue';
 
 const spinTime = 2;
 const spinRotations = 2;
-const ticketFlyTime = .8;
+const ticketFlyTime = 0.8;
 
 const props = defineProps<{
   ticketNumber: number;
@@ -35,8 +35,8 @@ defineExpose({
       '.result-ticket',
       {
         duration: ticketFlyTime,
-        y: -30,
-        ease: CustomEase.create('custom', '.3,-7,.51,12'),
+        y: -5,
+        ease: CustomEase.create('custom', '.3,-80,.51,90'),
         // ease: 'back.inOut',
         onComplete: () => emit('complete'),
       },

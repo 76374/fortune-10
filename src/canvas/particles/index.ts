@@ -1,51 +1,16 @@
+import type { Scene } from '@/canvas/scene';
 import type { EmitterConfigV3 } from '@pixi/particle-emitter';
 import * as particles from '@pixi/particle-emitter';
-import { Container, Loader, Renderer } from 'pixi.js';
+import { Container, Loader } from 'pixi.js';
 
-// const loadResources = (onComplete: () => void) => {
-//   const loader = Loader.shared;
-//   if (loader.resources['star']) {
-//     onComplete();
-//   } else {
-//     loader.add('star', '/img/star.png');
-//     loader.load(onComplete);
-//   }
-// };
+export type Particles = ReturnType<typeof getParticles>;
 
-const getParticles = (canvas: HTMLCanvasElement) => {
-  const stage = new Container();
-  const renderer = new Renderer({
-    backgroundAlpha: 0,
-    width: canvas.width,
-    height: canvas.height,
-    view: canvas,
-  });
+const getParticles = () => {
   const emitters = new Map<String, particles.Emitter>();
-
-  // loadResources(() => {});
-
-  let elapsed = 0;
-  let updateId = 0;
-  const update = () => {
-    const now = Date.now();
-    updateId = requestAnimationFrame(update);
-    emitters.forEach((emitter) => emitter.update((now - elapsed) * 0.001));
-    elapsed = now;
-    renderer.render(stage);
-  };
-
-  const setEnabled = (value: boolean) => {
-    if (value && !updateId) {
-      elapsed = Date.now();
-      update();
-    } else if (!value && updateId) {
-      cancelAnimationFrame(updateId);
-      updateId = 0;
-    }
-  };
+  let loadId = 0;
 
   return {
-    addParticles: (config: EmitterConfigV3, id: string) => {
+    addParticles: (config: EmitterConfigV3, id: string, container: Container) => {
       const textures: string[] | undefined = config.behaviors.find(
         (b) => b.type === 'textureRandom'
       )?.config.textures;
@@ -53,27 +18,33 @@ const getParticles = (canvas: HTMLCanvasElement) => {
         textures.forEach((tex) => {
           const loader = Loader.shared;
           if (!loader.resources[tex]) {
-            loader.add(tex).load();
+            loader.add(tex);
+            if (!loadId) {
+              requestAnimationFrame(() => {
+                loader.load();
+                loadId = 0;
+              });
+            }
           }
-        })
+        });
       }
 
-      const emitter = new particles.Emitter(stage, config);
+      const emitter = new particles.Emitter(container, config);
       emitter.emit = false;
       emitters.set(id, emitter);
     },
 
     play(id: string) {
-      setEnabled(true);
       const emitter = emitters.get(id);
       emitter && (emitter.emit = true);
     },
 
     destroy: () => {
-      cancelAnimationFrame(updateId);
       emitters.forEach((emitter) => emitter.destroy());
-      renderer.destroy();
-      stage.destroy();
+    },
+
+    attachToScene: (scene: Scene) => {
+      scene.updated.add((delta) => emitters.forEach((emitter) => emitter.update(delta)));
     },
   };
 };
