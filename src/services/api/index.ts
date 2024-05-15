@@ -1,4 +1,3 @@
-import getApi from "@/services/api/api";
-import getApiClient from "@/services/api/api-client";
+import getApi from '@/services/api/api';
 
-export default getApi(getApiClient());
+export default getApi();
