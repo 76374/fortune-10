@@ -2,35 +2,42 @@
 import getParticles from '@/canvas/particles';
 import { getWinStars } from '@/canvas/particles/win-stars';
 import getScene from '@/canvas/scene';
+import getTicketResultAnimation from "@/canvas/ticket-result-animation";
 import getWinPopup from '@/canvas/win-popup';
 import useGameStore from '@/composables/store';
+import currencyFormat from '@/services/format/currency-format';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const containerRef = ref<HTMLElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 const scene = getScene();
+
 const particles = getParticles();
 particles.attachToScene(scene);
+
 const winPopup = getWinPopup();
 winPopup.attachToScene(scene);
+
+const ticketResultAnimation = getTicketResultAnimation();
+ticketResultAnimation.attachToScene(scene);
 
 const gameStore = useGameStore();
 
 watch(
   () => gameStore.state,
-  (state) => {
+  (state, prevState) => {
     if (state === 'win') {
       scene.start();
 
-      // particles.play('starsTop');
-      // particles.play('starsBottom');
-      // particles.play('starsLeft');
-      // particles.play('starsRight');
+      ticketResultAnimation.playWin();
 
-      setTimeout(winPopup.show, 1000);
+      setTimeout(() => winPopup.show(currencyFormat(gameStore.winAmount, false)), 1000);
 
       setTimeout(() => gameStore.setReady(), 3000);
+    } else if (state === 'roundReady' && prevState === 'resultsReady') {
+      scene.start();
+      ticketResultAnimation.playLose();
     } else if (state === 'ticketsPurchase') {
       winPopup.hide();
       // keep one frame to hide stuff
@@ -40,13 +47,8 @@ watch(
 );
 
 const handleClick = () => {
-  // scene.start();
-
-  // particles.play('starsTop');
-  // particles.play('starsBottom');
-  // particles.play('starsLeft');
-  // particles.play('starsRight');
-  // winPopup.show();
+  scene.start();
+  ticketResultAnimation.playLose();
 };
 
 const getResize = (canvasEl: HTMLCanvasElement) => {
@@ -60,6 +62,7 @@ const getResize = (canvasEl: HTMLCanvasElement) => {
       canvasEl.height = height;
       scene.resize(width, height);
       winPopup.setRenderSize(width, height);
+      ticketResultAnimation.setRenderSize(width, height);
     }, 200);
   };
 };
@@ -84,14 +87,7 @@ onMounted(async () => {
 
     scene.setCanvas(canvasEl);
     winPopup.setParticles(particles);
-
-    // const addWinStars = (rect: Parameters<typeof getWinStars>[0], angle: number, id: string) =>
-    //   particles.addParticles(getWinStars(rect, angle, 0.2), id, scene.stage);
-    // const rect = { x: 380, y: 100, w: 440, h: 330 };
-    // addWinStars({ x: rect.x, y: rect.y, w: 490, h: 0 }, 0, 'starsTop');
-    // addWinStars({ x: rect.x, y: rect.h, w: 490, h: 0 }, 180, 'starsBottom');
-    // addWinStars({ x: rect.x, y: rect.y, w: 0, h: rect.h }, -90, 'starsLeft');
-    // addWinStars({ x: rect.x + rect.w, y: rect.y, w: 0, h: rect.h }, 90, 'starsRight');
+    ticketResultAnimation.setParticles(particles);
   });
 });
 

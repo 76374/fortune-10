@@ -77,7 +77,7 @@ const handleTicketClick = (ticketNumber: number) => {
       font-weight: bold;
       position: absolute;
       right: 16px;
-      top: 24px;
+      top: 48px;
     }
   }
 

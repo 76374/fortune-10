@@ -9,7 +9,6 @@ const winStyle: Partial<TextStyle> = {
   fontWeight: '1000' as TextStyleFontWeight,
   fontSize: 180,
   align: 'center',
-  // fill: '#ffcf40',
   fill: [0xffbf00, 16764736, 16768115, 0xffbf00],
   stroke: 0x3c096c,
   strokeThickness: 5,
@@ -29,7 +28,7 @@ const getWinPopup = () => {
   const winText = new Text('WIN', winStyle);
   textContainer.addChild(winText);
 
-  const amountText = new Text('2€', winStyle);
+  const amountText = new Text('', winStyle);
   amountText.x = textContainer.width / 2 - amountText.width / 2;
   amountText.y = 180;
   textContainer.addChild(amountText);
@@ -69,7 +68,10 @@ const getWinPopup = () => {
       );
     },
 
-    show: () => {
+    show: (winAmountText: string) => {
+      amountText.text = winAmountText;
+      amountText.x = textContainer.width / 2 - amountText.width / 2;
+
       popup.visible = true;
       gsap.to(
         {},
