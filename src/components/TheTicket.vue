@@ -10,7 +10,7 @@ const props = defineProps<{ ticketNumber: number }>()
 .ticket {
   align-content: center;
   aspect-ratio: 442 / 228;
-  background-image: url('~../../public/img/ticket.png');
+  background-image: url('img/ticket.png');
   background-repeat: no-repeat;
   background-size: contain;
   text-align: center;
