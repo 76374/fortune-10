@@ -48,18 +48,6 @@ const props = defineProps<{
   }
 }
 
-@media (max-width: 764px) {
-  .panel {
-    .buy-bt {
-      left: 50%;
-      position: absolute;
-      top: 78px;
-      transform: translate(-50%, 0);
-      z-index: 1;
-    }
-  }
-}
-
 .ticket-enter-active,
 .ticket-leave-active {
   transition: all 0.4s ease;

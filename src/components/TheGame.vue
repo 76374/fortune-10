@@ -84,7 +84,7 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 756px) {
+@media (orientation: portrait) {
   .game {
     height: 99vh;
   }

@@ -13,17 +13,17 @@ const emit = defineEmits<{
 
 const timeLeft = ref(15);
 
-const intervalId = setInterval(() => {
-  timeLeft.value--;
-
-  if (timeLeft.value < 0) {
-    clearInterval(intervalId);
-    timeLeft.value = 0;
-
-    emit('selected', 0);
-    emit('completed');
-  }
-}, 1000);
+// const intervalId = setInterval(() => {
+//   timeLeft.value--;
+//
+//   if (timeLeft.value < 0) {
+//     clearInterval(intervalId);
+//     timeLeft.value = 0;
+//
+//     emit('selected', 0);
+//     emit('completed');
+//   }
+// }, 1000);
 
 const handleTicketClick = (ticketNumber: number) => {
   clearInterval(intervalId);
@@ -92,29 +92,31 @@ const handleTicketClick = (ticketNumber: number) => {
     grid-template-rows: repeat(2, 1fr);
     padding: 32px;
     row-gap: 15px;
-
-    .ticket {
-      cursor: pointer;
-      font-size: 2em;
-    }
   }
 
-  @media (max-width: 840px) {
-    .container {
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      padding: 0 32px;
-    }
+  .ticket {
+    cursor: pointer;
+    font-size: 2em;
   }
 
-  @media (max-width: 756px) {
+  @media (orientation: portrait) {
     .container {
-      grid-template-rows: repeat(4, 1fr);
       grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      padding: 32px;
     }
   }
 
-  @media (max-width: 590px) {
+  @media (max-height: 420px) and (orientation: landscape) {
+    .container {
+      padding: 0 32px;
+      .ticket {
+        font-size: 1.5em;
+      }
+    }
+  }
+
+  @media (max-width: 560px) and (orientation: portrait) {
     .container {
       grid-template-rows: repeat(5, 1fr);
       grid-template-columns: repeat(2, 1fr);

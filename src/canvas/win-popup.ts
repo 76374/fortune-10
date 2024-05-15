@@ -1,7 +1,7 @@
 import type { Particles } from '@/canvas/particles';
 import { getWinStars } from '@/canvas/particles/win-stars';
 import { gsap } from 'gsap';
-import { Container, Graphics, Text, TextStyle, type TextStyleFontWeight } from 'pixi.js';
+import { Container, Graphics, Text, TextStyle } from 'pixi.js';
 
 const winStyle: Partial<TextStyle> = {
   fontFamily: 'sans-serif',
