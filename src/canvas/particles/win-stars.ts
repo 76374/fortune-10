@@ -53,7 +53,7 @@ export const getWinStars = (rect: Rect, rotation: number, duration: number) => (
     {
       type: 'textureRandom',
       config: {
-        textures: ['/img/star.png'],
+        textures: ['assets/img/star.png'],
       },
     },
     {
