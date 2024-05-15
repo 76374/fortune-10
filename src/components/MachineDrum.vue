@@ -10,7 +10,6 @@ const ticketFlyTime = 0.7;
 
 const props = defineProps<{
   ticketNumber: number;
-  // hideTicket: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -18,14 +17,6 @@ const emit = defineEmits<{
 }>();
 
 const ticketVisible = ref(false);
-// watch(
-//   () => gameStore.state,
-//   (state) => {
-//     if (state === 'ticketsPurchase') {
-//       ticketVisible.value = false;
-//     }
-//   }
-// );
 
 defineExpose({
   spin: () => {
@@ -33,9 +24,6 @@ defineExpose({
     gsap.to('.drum polygon', {
       rotation: 360 * spinRotations,
       duration: spinTime,
-      // onComplete() {
-      //   ticketVisible.value = true;
-      // },
     });
     gsap.from('.result-ticket', {
       scale: 0,
