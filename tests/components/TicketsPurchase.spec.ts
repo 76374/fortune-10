@@ -24,6 +24,8 @@ describe('GamePanel', () => {
 
     expect(wrapper.findAll('.ticket')).toHaveLength(10);
     expect(wrapper.text()).toContain('Ticket cost: 1.00€');
+
+    vi.runAllTimers();
   });
 
   it('should emit complete on timeout', () => {

@@ -4,7 +4,6 @@ import { reactive } from 'vue';
 
 export type GameState =
   | 'none'
-  | 'roundReady'
   | 'ticketsPurchase'
   | 'ticketSelected'
   | 'roundStart'
@@ -35,7 +34,7 @@ const getGameStore = () => reactive({
 
       this.balance = result.balance;
       this.ticketPrice = result.ticketPrice;
-      this.setState('roundReady');
+      this.setState('ticketsPurchase');
 
       return result;
     });
@@ -72,10 +71,6 @@ const getGameStore = () => reactive({
   setResult() {
     this.state = this.winAmount ? 'win' : 'lose';
     this.balance = this.postRoundBalance;
-  },
-
-  setReady() {
-    this.setState('roundReady');
   },
 });
 

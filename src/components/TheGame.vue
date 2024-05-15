@@ -11,11 +11,7 @@ const gameStore = getGameStore();
 const drumRef = ref<InstanceType<typeof MachineDrum> | null>(null);
 
 const canvasState = computed<CanvasState>(() =>
-  gameStore.state === 'roundReady' && gameStore.prevState === 'win'
-    ? 'win'
-    : gameStore.state === 'win' || gameStore.state === 'lose'
-      ? gameStore.state
-      : 'none'
+  gameStore.state === 'win' || gameStore.state === 'lose' ? gameStore.state : 'none'
 );
 
 watch(
@@ -39,7 +35,6 @@ onMounted(() => {
     <GamePanel
       :balance="gameStore.balance"
       :selected-ticket="gameStore.selectedTicket"
-      :show-select-ticket="gameStore.state === 'roundReady'"
       @purchase-clicked="gameStore.setPurchaseTickets()"
     />
     <div class="game-area">
@@ -51,7 +46,7 @@ onMounted(() => {
       <CanvasLayer
         :state="canvasState"
         :win-amount="gameStore.winAmount"
-        @animation-completed="gameStore.setReady()"
+        @animation-completed="gameStore.setPurchaseTickets()"
       />
       <Transition name="tickets">
         <TicketsPurchase

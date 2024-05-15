@@ -4,19 +4,13 @@ import currencyFormat from '../services/format/currency-format';
 
 const props = defineProps<{
   balance: number;
-  showSelectTicket: boolean;
   selectedTicket: number;
 }>();
-
-const emit = defineEmits<{ (e: 'purchase-clicked'): void }>();
 </script>
 
 <template>
   <div class="panel">
     <div class="balance">Balance: {{ currencyFormat(props.balance) }}</div>
-    <button v-if="props.showSelectTicket" class="buy-bt" @click="emit('purchase-clicked')">
-      Select a ticket
-    </button>
     <div class="ticket-container">
       <Transition name="ticket">
         <TheTicket
@@ -40,17 +34,6 @@ const emit = defineEmits<{ (e: 'purchase-clicked'): void }>();
 
   .balance {
     margin-left: 16px;
-  }
-
-  .buy-bt {
-    background-color: var(--primary-color);
-    border: 1px solid #faa275;
-    border-radius: 8px;
-    color: #f2f2f2;
-    cursor: pointer;
-    font-size: 1.4em;
-    margin: 4px;
-    padding: 4px 32px;
   }
 
   .ticket-container {

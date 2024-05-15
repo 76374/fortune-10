@@ -9,8 +9,8 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 export type CanvasState = 'none' | 'win' | 'lose';
 
 const winDelay = 1000;
-const winDuration = 2000;
-const loseDuration = 1600;
+const winDuration = 2500;
+const loseDuration = 2000;
 
 const props = defineProps<{
   state: CanvasState;

@@ -19,7 +19,7 @@ describe('game-store', () => {
   it('should do initialization', async () => {
     expect(store.state).toBe('none');
     await store.init();
-    expect(store.state).toBe('roundReady');
+    expect(store.state).toBe('ticketsPurchase');
     expect(store.balance).toBe(300);
     expect(store.ticketPrice).toBe(100);
   });

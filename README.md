@@ -12,7 +12,7 @@ npm install
 npm run preview
 ```
 
-### Run Unit Tests 
+### Run Unit Tests
 
 ```sh
 npm run test:unit

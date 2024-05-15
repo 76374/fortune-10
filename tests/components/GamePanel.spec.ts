@@ -8,7 +8,6 @@ type Props = ComponentProps<typeof GamePanel>;
 
 const getProps = (): Props => ({
   balance: 0,
-  showSelectTicket: false,
   selectedTicket: 0,
 });
 
@@ -24,11 +23,5 @@ describe('GamePanel', () => {
     const wrapper = getWrapper({ balance: 200, selectedTicket: 8 });
     expect(wrapper.text()).toContain('Balance: 2.00€');
     expect(wrapper.text()).toContain('8');
-  });
-
-  it('should trigger selected event', () => {
-    const wrapper = getWrapper({ showSelectTicket: true });
-    wrapper.find('button').trigger('click');
-    expect(wrapper.emitted()['purchase-clicked']).toHaveLength(1);
   });
 });
