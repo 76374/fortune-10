@@ -13,17 +13,17 @@ const emit = defineEmits<{
 
 const timeLeft = ref(15);
 
-// const intervalId = setInterval(() => {
-//   timeLeft.value--;
-//
-//   if (timeLeft.value < 0) {
-//     clearInterval(intervalId);
-//     timeLeft.value = 0;
-//
-//     emit('selected', 0);
-//     emit('completed');
-//   }
-// }, 1000);
+const intervalId = setInterval(() => {
+  timeLeft.value--;
+
+  if (timeLeft.value < 0) {
+    clearInterval(intervalId);
+    timeLeft.value = 0;
+
+    emit('selected', 0);
+    emit('completed');
+  }
+}, 1000);
 
 const handleTicketClick = (ticketNumber: number) => {
   clearInterval(intervalId);

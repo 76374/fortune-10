@@ -25,11 +25,11 @@ defineExpose({
       rotation: 360 * spinRotations,
       duration: spinTime,
     });
-    gsap.from('.result-ticket', {
-      scale: 0,
-      alpha: 0,
+    gsap.to('.result-ticket', {
+      scale: 1,
+      alpha: 1,
       duration: ticketFlyTime,
-      rotateX: 180,
+      rotateX: 0,
       ease: 'power1.in',
       delay: spinTime,
 
@@ -52,7 +52,11 @@ defineExpose({
   },
 
   hideTicket: () => {
-    ticketVisible.value = false;
+    gsap.set('.result-ticket', {
+      scale: 0,
+      alpha: 0,
+      rotateX: 180,
+    });
   }
 });
 </script>
@@ -82,7 +86,6 @@ defineExpose({
   </svg>
   <div class="result-ticket-container">
     <TheTicket
-      v-show="ticketVisible"
       class="result-ticket"
       :ticket-number="props.ticketNumber"
     />
