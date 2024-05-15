@@ -1,4 +1,4 @@
-import type { GameStore } from '@/store/game-state';
+import type { GameStore } from '@/store/game-store';
 import { inject } from 'vue';
 
 const useGameStore = () => {

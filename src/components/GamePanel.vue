@@ -31,6 +31,7 @@ const handleTicketPurchase = () => {
 <style scoped>
 .panel {
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: space-between;
   position: relative;

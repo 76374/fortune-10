@@ -2,17 +2,17 @@ import { Container, Renderer } from 'pixi.js';
 
 export type Scene = ReturnType<typeof getScene>;
 
-type Callback<T1 = void> = (arg: T1) => void;
+type Callback<T = void> = (arg: T) => void;
 
-const getSignal = <T1 = void>() => {
-  let callbacks: Callback<T1>[] = [];
+const getSignal = <T = void>() => {
+  let callbacks: Callback<T>[] = [];
 
   return {
-    add: (callback: Callback<T1>) => {
+    add: (callback: Callback<T>) => {
       callbacks.push(callback);
     },
 
-    emit: (arg: T1) => callbacks.forEach((cb) => cb(arg)),
+    emit: (arg: T) => callbacks.forEach((cb) => cb(arg)),
 
     removeAll: () => {
       callbacks = [];

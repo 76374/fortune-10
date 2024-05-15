@@ -1,6 +1,5 @@
 import type { Particles } from '@/canvas/particles';
 import { getWinStars } from '@/canvas/particles/win-stars';
-import { type Scene } from '@/canvas/scene';
 import { gsap } from 'gsap';
 import { Container, Graphics, Text, TextStyle, type TextStyleFontWeight } from 'pixi.js';
 
@@ -19,8 +18,9 @@ const winStyle: Partial<TextStyle> = {
 
 const showDuration = 1;
 
-const getWinPopup = () => {
+const getWinPopup = (container: Container, particles: Particles) => {
   const popup = new Container();
+  container.addChild(popup);
 
   const textContainer = new Container();
   popup.addChild(textContainer);
@@ -39,33 +39,23 @@ const getWinPopup = () => {
 
   const particleContainers = [new Container(), new Container()];
   popup.addChild(...particleContainers);
-
-  let particles: Particles | null = null;
+  const rect = { x: 0, y: 0, w: 0, h: 300 };
+  particles.addParticles(
+    getWinStars(rect, -90, showDuration),
+    'popupStarsLeft',
+    particleContainers[0]
+  );
+  particles.addParticles(
+    getWinStars(rect, 90, showDuration),
+    'popupStarsRight',
+    particleContainers[1]
+  );
 
   return {
-    attachToScene: (scene: Scene) => {
-      scene.stage.addChild(popup);
-    },
-
     setRenderSize: (width: number, height: number) => {
       textContainer.x = width / 2 - textContainer.width / 2;
       textContainer.y = height / 2 - textContainer.height / 2;
       particleContainers[0].y = particleContainers[1].y = textContainer.y;
-    },
-
-    setParticles: (value: Particles) => {
-      particles = value;
-      const rect = { x: 0, y: 0, w: 0, h: 300 };
-      particles.addParticles(
-        getWinStars(rect, -90, showDuration),
-        'popupStarsLeft',
-        particleContainers[0]
-      );
-      particles.addParticles(
-        getWinStars(rect, 90, showDuration),
-        'popupStarsRight',
-        particleContainers[1]
-      );
     },
 
     show: (winAmountText: string) => {
@@ -87,10 +77,8 @@ const getWinPopup = () => {
           },
         }
       );
-      if (particles) {
-        particles.play('popupStarsLeft');
-        particles.play('popupStarsRight');
-      }
+      particles.play('popupStarsLeft');
+      particles.play('popupStarsRight');
     },
 
     hide: () => {

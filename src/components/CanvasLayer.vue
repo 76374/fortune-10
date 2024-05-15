@@ -1,26 +1,23 @@
 <script setup lang="ts">
 import getParticles from '@/canvas/particles';
-import { getWinStars } from '@/canvas/particles/win-stars';
 import getScene from '@/canvas/scene';
-import getTicketResultAnimation from "@/canvas/ticket-result-animation";
+import getTicketResultAnimation from '@/canvas/ticket-result-animation';
 import getWinPopup from '@/canvas/win-popup';
 import useGameStore from '@/composables/store';
 import currencyFormat from '@/services/format/currency-format';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
-const containerRef = ref<HTMLElement | null>(null);
-const canvasRef = ref<HTMLCanvasElement | null>(null);
+const canvasContainer = ref<HTMLElement | null>(null);
+const canvas = ref<HTMLCanvasElement | null>(null);
 
 const scene = getScene();
 
 const particles = getParticles();
 particles.attachToScene(scene);
 
-const winPopup = getWinPopup();
-winPopup.attachToScene(scene);
+const winPopup = getWinPopup(scene.stage, particles);
 
-const ticketResultAnimation = getTicketResultAnimation();
-ticketResultAnimation.attachToScene(scene);
+const ticketResultAnimation = getTicketResultAnimation(scene.stage, particles);
 
 const gameStore = useGameStore();
 
@@ -46,12 +43,7 @@ watch(
   }
 );
 
-const handleClick = () => {
-  scene.start();
-  ticketResultAnimation.playLose();
-};
-
-const getResize = (canvasEl: HTMLCanvasElement) => {
+const getResizer = (canvasEl: HTMLCanvasElement) => {
   let timeoutId = 0;
   return (width: number, height: number) => {
     if (timeoutId) {
@@ -68,27 +60,22 @@ const getResize = (canvasEl: HTMLCanvasElement) => {
 };
 
 onMounted(async () => {
-  // init after canvas size is updated
-  requestAnimationFrame(() => {
-    const canvasEl = canvasRef.value;
-    if (!canvasEl) {
-      return;
-    }
+  const canvasEl = canvas.value;
+  if (!canvasEl) {
+    return;
+  }
 
-    const containerEl = containerRef.value;
-    if (containerEl) {
-      const resize = getResize(canvasEl);
-      const resizeObserver = new ResizeObserver((entries) => {
-        const entry = entries[0];
-        resize(entry.contentRect.width - 4, entry.contentRect.height - 4);
-      });
-      resizeObserver.observe(containerEl);
-    }
+  const containerEl = canvasContainer.value;
+  if (containerEl) {
+    const resize = getResizer(canvasEl);
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      resize(entry.contentRect.width - 4, entry.contentRect.height - 4);
+    });
+    resizeObserver.observe(containerEl);
+  }
 
-    scene.setCanvas(canvasEl);
-    winPopup.setParticles(particles);
-    ticketResultAnimation.setParticles(particles);
-  });
+  scene.setCanvas(canvasEl);
 });
 
 onBeforeUnmount(() => {
@@ -98,19 +85,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="canvas-layer" ref="containerRef">
-    <canvas
-      ref="canvasRef"
-      :width="containerRef?.offsetWidth"
-      :height="containerRef?.offsetHeight"
-      @click="handleClick"
-    />
+  <div class="canvas-layer" ref="canvasContainer">
+    <canvas ref="canvas" />
   </div>
 </template>
 
 <style scoped>
 .canvas-layer {
-  /*pointer-events: none;*/
+  pointer-events: none;
   position: absolute;
   top: 0;
   width: 100%;

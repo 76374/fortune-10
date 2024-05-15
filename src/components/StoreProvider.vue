@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import gameState from '@/store/game-state';
+import gameState from '@/store/game-store';
 import { provide } from 'vue';
 
 provide('gameStore', gameState);

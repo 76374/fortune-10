@@ -19,10 +19,6 @@ const emit = defineEmits<{
 
 const gameStore = useGameStore();
 
-// const ticketVisible = computed(
-//   () => gameStore.state !== 'ticketsPurchase' && gameStore.state !== 'ticketSelected'
-// );
-
 const ticketVisible = ref(false);
 watch(
   () => gameStore.state,
@@ -43,44 +39,25 @@ defineExpose({
         ticketVisible.value = true;
       },
     });
-    // gsap.set('.result-ticket', { y: 100 });
     gsap.from('.result-ticket', {
       scale: 0,
-      // rotation: 360 * 3,
-
-      // y: -200,
       alpha: 0,
       duration: ticketFlyTime,
       rotateX: 180,
-      // ease: 'none',
       ease: 'power1.in',
       delay: spinTime,
 
       onComplete: () => emit('complete'),
     });
-    // gsap.set('[data-id=ticket-container]', { y: -200 });
     gsap.from('.result-ticket-container', {
       y: -80,
       duration: ticketFlyTime,
       delay: spinTime,
-      // ease: CustomEase.create("custom", "M0,0 C0.206,-0.273 0.22,-0.435 0.437,-0.426 0.679,-0.415 0.899,0.355 1,1"),
       ease: CustomEase.create(
         'custom',
         'M0,0 C0.059,-0.255 0.23,-0.85 0.5,-0.822 0.761,-0.794 0.95,0.388 1,1'
       ),
     });
-    // gsap.from(
-    //   '.result-ticket',
-    //   {
-    //     duration: ticketFlyTime,
-    //     // y: -5,
-    //     // ease: CustomEase.create('custom', '.3,-80,.51,90'),
-    //     // ease: 'back.inOut',
-    //
-    //     onComplete: () => emit('complete'),
-    //   },
-    //   '<'
-    // );
   },
 });
 </script>
@@ -88,6 +65,7 @@ defineExpose({
 <template>
   <svg class="drum" height="200" width="160" xmlns="http://www.w3.org/2000/svg">
     <polygon
+      data-id="drum"
       points="140,70 105,131 35,131 0,70 35,9 105,9"
       transform="translate(20)"
       fill="#3c096c"
@@ -119,7 +97,7 @@ defineExpose({
   left: 50%;
   transform: translate(-50%, -50%) scale(1.4);
 
-  polygon {
+  [data-id=drum] {
     transform-origin: 70px 61px;
   }
 }
