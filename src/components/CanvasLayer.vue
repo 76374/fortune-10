@@ -8,6 +8,10 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 export type CanvasState = 'none' | 'win' | 'lose';
 
+const winDelay = 1000;
+const winDuration = 2000;
+const loseDuration = 1600;
+
 const props = defineProps<{
   state: CanvasState;
   winAmount: number;
@@ -29,6 +33,8 @@ const winPopup = getWinPopup(scene.stage, particles);
 
 const ticketResultAnimation = getTicketResultAnimation(scene.stage, particles);
 
+let timeoutId = 0;
+
 watch(
   () => props.state,
   (state) => {
@@ -37,13 +43,15 @@ watch(
 
       ticketResultAnimation.playWin();
 
-      setTimeout(() => winPopup.show(currencyFormat(props.winAmount, false)), 1000);
+      timeoutId = setTimeout(() => {
+        winPopup.show(currencyFormat(props.winAmount, false));
 
-      setTimeout(() => emit('animation-completed'), 3000);
+        timeoutId = setTimeout(() => emit('animation-completed'), winDuration);
+      }, winDelay);
     } else if (state === 'lose') {
       scene.start();
       ticketResultAnimation.playLose();
-      setTimeout(() => emit('animation-completed'), 1500);
+      timeoutId = setTimeout(() => emit('animation-completed'), loseDuration);
     } else if (state === 'none') {
       winPopup.hide();
       // keep one frame to hide stuff
@@ -88,6 +96,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  clearTimeout(timeoutId);
   particles.destroy();
   scene.destroy();
 });

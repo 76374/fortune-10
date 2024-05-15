@@ -22,9 +22,6 @@ const intervalId = setInterval(() => {
 
     emit('selected', 0);
     emit('completed');
-
-    // gameStore.buyTicket(0);
-    // gameStore.setRoundStart();
   }
 }, 1000);
 
@@ -32,14 +29,12 @@ const handleTicketClick = (ticketNumber: number) => {
   clearInterval(intervalId);
 
   emit('selected', ticketNumber);
-  // gameStore.buyTicket(ticketNumber);
 
   gsap.to(`.ticket:nth-child(${ticketNumber})`, {
     scale: 0,
     alpha: 0,
     duration: 0.4,
     onComplete: () => {
-      // gameStore.setRoundStart();
       emit('completed');
     },
   });

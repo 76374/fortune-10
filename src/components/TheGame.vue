@@ -10,14 +10,13 @@ const gameStore = getGameStore();
 
 const drumRef = ref<InstanceType<typeof MachineDrum> | null>(null);
 
-const canvasState = computed<CanvasState>(() => {
-  console.log(gameStore.state, gameStore.prevState)
-  return gameStore.state === 'roundReady' && gameStore.prevState === 'win'
+const canvasState = computed<CanvasState>(() =>
+  gameStore.state === 'roundReady' && gameStore.prevState === 'win'
     ? 'win'
     : gameStore.state === 'win' || gameStore.state === 'lose'
       ? gameStore.state
       : 'none'
-});
+);
 
 watch(
   () => gameStore.state,
@@ -41,7 +40,7 @@ onMounted(() => {
       :balance="gameStore.balance"
       :selected-ticket="gameStore.selectedTicket"
       :show-select-ticket="gameStore.state === 'roundReady'"
-      @purchase-clicked="gameStore.purchaseTickets()"
+      @purchase-clicked="gameStore.setPurchaseTickets()"
     />
     <div class="game-area">
       <MachineDrum

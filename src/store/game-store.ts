@@ -41,7 +41,7 @@ const getGameStore = () => reactive({
     });
   },
 
-  purchaseTickets() {
+  setPurchaseTickets() {
     this.selectedTicket = 0;
     this.setState('ticketsPurchase');
   },

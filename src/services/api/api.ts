@@ -1,4 +1,3 @@
-
 // a bit of fake logic pretending the server exists
 
 const getApi = () => {

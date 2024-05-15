@@ -34,8 +34,6 @@ defineExpose({
       delay: spinTime,
 
       onStart() {
-        console.log("onStart")
-
         ticketVisible.value = true;
       },
       onComplete() {
@@ -54,7 +52,6 @@ defineExpose({
   },
 
   hideTicket: () => {
-    console.log("hide")
     ticketVisible.value = false;
   }
 });
