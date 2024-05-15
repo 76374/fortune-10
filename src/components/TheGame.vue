@@ -50,6 +50,8 @@ onMounted(() => {
 
 <style scoped>
 .game {
+  background: rgb(48,0,74);
+  background: linear-gradient(90deg, rgba(48,0,74,1) 0%, rgba(192,76,197,1) 45%, rgba(48,0,74,1) 100%);
   border: 1px solid var(--primary-color);
   display: flex;
   flex-direction: column;

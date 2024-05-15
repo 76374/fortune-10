@@ -60,7 +60,7 @@ const handleTicketClick = (ticketNumber: number) => {
 
 <style scoped>
 .tickets-purchase {
-  background-color: #f2f2f2;
+  background-color: rgba(0,0,0,0.3);
   position: absolute;
   top: 0;
   width: 100%;

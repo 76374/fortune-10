@@ -14,7 +14,7 @@ const handleTicketPurchase = () => {
   <div class="panel">
     <div class="balance">Balance: {{ currencyFormat(gameStore.balance) }}</div>
     <button v-if="gameStore.state === 'roundReady'" class="buy-bt" @click="handleTicketPurchase">
-      BUY TICKET
+      Select a ticket
     </button>
     <div class="ticket-container">
       <Transition name="ticket">

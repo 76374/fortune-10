@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import TheTicket from '@/components/TheTicket.vue';
+import useGameStore from '@/composables/store';
 import { gsap } from 'gsap';
 // import CustomEase from 'gsap/CustomEase';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const spinTime = 2;
 const spinRotations = 2;
@@ -16,7 +17,11 @@ const emit = defineEmits<{
   (e: 'complete'): void;
 }>();
 
-const ticketVisible = ref(false);
+const gameStore = useGameStore();
+
+const ticketVisible = computed(
+  () => gameStore.state !== 'ticketsPurchase' && gameStore.state !== 'ticketSelected'
+);
 
 defineExpose({
   spin: () => {
@@ -28,7 +33,7 @@ defineExpose({
         scale: 0,
         rotation: 360 * 3,
 
-        y: -100,
+        y: -200,
         alpha: 0,
         duration: ticketFlyTime,
         // ease: 'power1.in',
