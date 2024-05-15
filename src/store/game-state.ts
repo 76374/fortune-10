@@ -44,7 +44,9 @@ const gameStore = reactive({
     this.postRoundBalance = 0;
     this.winAmount = 0;
     this.resultTicketNumber = 0;
-    this.balance -= this.ticketPrice;
+    if (ticketNumber) {
+      this.balance -= this.ticketPrice;
+    }
     this.state = 'ticketSelected';
 
     return api.startRound(ticketNumber).then((result) => {

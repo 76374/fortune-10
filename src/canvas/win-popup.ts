@@ -2,11 +2,11 @@ import type { Particles } from '@/canvas/particles';
 import { getWinStars } from '@/canvas/particles/win-stars';
 import { type Scene } from '@/canvas/scene';
 import { gsap } from 'gsap';
-import { Container, Graphics, Text } from 'pixi.js';
+import { Container, Graphics, Text, TextStyle, type TextStyleFontWeight } from 'pixi.js';
 
-const winStyle = {
+const winStyle: Partial<TextStyle> = {
   fontFamily: 'sans-serif',
-  fontWeight: 1000,
+  fontWeight: '1000' as TextStyleFontWeight,
   fontSize: 180,
   align: 'center',
   // fill: '#ffcf40',
@@ -30,10 +30,12 @@ const getWinPopup = () => {
   textContainer.addChild(winText);
 
   const amountText = new Text('2€', winStyle);
+  amountText.x = textContainer.width / 2 - amountText.width / 2;
   amountText.y = 180;
   textContainer.addChild(amountText);
 
   const mask = new Graphics();
+  textContainer.addChild(mask);
   textContainer.mask = mask;
 
   const particleContainers = [new Container(), new Container()];
@@ -46,9 +48,10 @@ const getWinPopup = () => {
       scene.stage.addChild(popup);
     },
 
-    setRenderWidth: (width: boolean) => {
-      winText.x = width / 2 - winText.width / 2;
-      amountText.x = width / 2 - amountText.width / 2;
+    setRenderSize: (width: number, height: number) => {
+      textContainer.x = width / 2 - textContainer.width / 2;
+      textContainer.y = height / 2 - textContainer.height / 2;
+      particleContainers[0].y = particleContainers[1].y = textContainer.y;
     },
 
     setParticles: (value: Particles) => {
@@ -73,12 +76,12 @@ const getWinPopup = () => {
         {
           duration: showDuration,
           onUpdate() {
-            const width = winText.width * this.ratio;
-            const x = winText.x + winText.width / 2 - width / 2;
+            const width = textContainer.width * this.ratio;
+            const x = textContainer.width / 2 - width / 2;
             mask.clear().beginFill(0).drawRect(x, 0, width, 500);
 
-            particleContainers[0].x = x + 10;
-            particleContainers[1].x = x + width - 10;
+            particleContainers[0].x = textContainer.x + x + 10;
+            particleContainers[1].x = textContainer.x + x + width - 10;
           },
         }
       );

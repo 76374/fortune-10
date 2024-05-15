@@ -1,16 +1,9 @@
 <script setup lang="ts">
+import TheTicket from '@/components/TheTicket.vue';
 import useGameStore from '@/composables/store';
-import gameState, { GameState } from "@/store/game-state";
-import { watch } from "vue";
 import currencyFormat from '../services/format/currency-format';
 
 const gameStore = useGameStore();
-
-// watch(
-//   () => gameStore.state,
-//   (state) => {
-//   }
-// );
 
 const handleTicketPurchase = () => {
   gameStore.purchaseTickets();
@@ -23,45 +16,57 @@ const handleTicketPurchase = () => {
     <button v-if="gameStore.state === 'roundReady'" class="buy-bt" @click="handleTicketPurchase">
       BUY TICKET
     </button>
-    <Transition name="ticket">
-      <div v-if="gameStore.selectedTicket" class="ticket" >
-        {{ gameStore.selectedTicket }}
-      </div>
-    </Transition>
+    <div class="ticket-container">
+      <Transition name="ticket">
+        <TheTicket
+          v-if="gameStore.selectedTicket"
+          class="ticket"
+          :ticket-number="gameStore.selectedTicket"
+        />
+      </Transition>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .panel {
-  position: relative;
+  align-items: center;
   display: flex;
   justify-content: space-between;
+  position: relative;
   height: 74px;
 
   .balance {
-    margin-left: 8px;
+    margin-left: 16px;
   }
 
   .buy-bt {
-    position: absolute;
-    left: 50%;
-    top: 8px;
-    transform: translate(-50%, 0);
-    font-size: 1.5em;
-    z-index: 1;
+    margin: 4px;
+    font-size: 1.4em;
+    padding: 4px 32px;
   }
 
-  .ticket {
-    margin: 8px;
-    background-image: url('img/ticket.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    color: #240046;
-    text-align: center;
-    font-size: 1.5em;
-    font-weight: bold;
-    align-content: center;
-    width: 110px;
+  .ticket-container {
+    min-width: 170px;
+    height: 100%;
+
+    .ticket {
+      font-size: 1.5em;
+      margin: 8px 8px 8px auto;
+      width: 110px;
+    }
+  }
+}
+
+@media (max-width: 764px) {
+  .panel {
+    .buy-bt {
+      left: 50%;
+      position: absolute;
+      top: 78px;
+      transform: translate(-50%, 0);
+      z-index: 1;
+    }
   }
 }
 

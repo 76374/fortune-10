@@ -23,17 +23,18 @@ watch(
     if (state === 'win') {
       scene.start();
 
-      particles.play('starsTop');
-      particles.play('starsBottom');
-      particles.play('starsLeft');
-      particles.play('starsRight');
+      // particles.play('starsTop');
+      // particles.play('starsBottom');
+      // particles.play('starsLeft');
+      // particles.play('starsRight');
 
       setTimeout(winPopup.show, 1000);
 
-      setTimeout(() => gameStore.setReady(), 2000);
+      setTimeout(() => gameStore.setReady(), 3000);
     } else if (state === 'ticketsPurchase') {
       winPopup.hide();
-      scene.stop();
+      // keep one frame to hide stuff
+      requestAnimationFrame(scene.stop);
     }
   }
 );
@@ -41,33 +42,56 @@ watch(
 const handleClick = () => {
   scene.start();
 
-  particles.play('starsTop');
-  particles.play('starsBottom');
-  particles.play('starsLeft');
-  particles.play('starsRight');
-  // winPopup.show();
+  // particles.play('starsTop');
+  // particles.play('starsBottom');
+  // particles.play('starsLeft');
+  // particles.play('starsRight');
+  winPopup.show();
+};
+
+const getResize = (canvasEl: HTMLCanvasElement) => {
+  let timeoutId = 0;
+  return (width: number, height: number) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      canvasEl.width = width;
+      canvasEl.height = height;
+      scene.resize(width, height);
+      winPopup.setRenderSize(width, height);
+    }, 200);
+  };
 };
 
 onMounted(async () => {
-  // to update canvas size first
+  // init after canvas size is updated
   requestAnimationFrame(() => {
     const canvasEl = canvasRef.value;
     if (!canvasEl) {
       return;
     }
 
+    const containerEl = containerRef.value;
+    if (containerEl) {
+      const resize = getResize(canvasEl);
+      const resizeObserver = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        resize(entry.contentRect.width - 4, entry.contentRect.height - 4);
+      });
+      resizeObserver.observe(containerEl);
+    }
+
     scene.setCanvas(canvasEl);
-    winPopup.setRenderWidth(canvasEl.width);
     winPopup.setParticles(particles);
 
-    const addWinStars = (rect: Parameters<typeof getWinStars>[0], angle: number, id: string) =>
-      particles.addParticles(getWinStars(rect, angle, 0.2), id, scene.stage);
-
-    const rect = { x: 380, y: 100, w: 440, h: 330 };
-    addWinStars({ x: rect.x, y: rect.y, w: 490, h: 0 }, 0, 'starsTop');
-    addWinStars({ x: rect.x, y: rect.h, w: 490, h: 0 }, 180, 'starsBottom');
-    addWinStars({ x: rect.x, y: rect.y, w: 0, h: rect.h }, -90, 'starsLeft');
-    addWinStars({ x: rect.x + rect.w, y: rect.y, w: 0, h: rect.h }, 90, 'starsRight');
+    // const addWinStars = (rect: Parameters<typeof getWinStars>[0], angle: number, id: string) =>
+    //   particles.addParticles(getWinStars(rect, angle, 0.2), id, scene.stage);
+    // const rect = { x: 380, y: 100, w: 440, h: 330 };
+    // addWinStars({ x: rect.x, y: rect.y, w: 490, h: 0 }, 0, 'starsTop');
+    // addWinStars({ x: rect.x, y: rect.h, w: 490, h: 0 }, 180, 'starsBottom');
+    // addWinStars({ x: rect.x, y: rect.y, w: 0, h: rect.h }, -90, 'starsLeft');
+    // addWinStars({ x: rect.x + rect.w, y: rect.y, w: 0, h: rect.h }, 90, 'starsRight');
   });
 });
 

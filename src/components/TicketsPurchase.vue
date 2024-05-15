@@ -1,12 +1,31 @@
 <script setup lang="ts">
+import TheTicket from '@/components/TheTicket.vue';
 import useGameStore from '@/composables/store';
 import { gsap } from 'gsap';
+import { ref } from 'vue';
 import currencyFormat from '../services/format/currency-format';
 
 const gameStore = useGameStore();
 
+const timeLeft = ref(15);
+
+// const intervalId = setInterval(() => {
+//   timeLeft.value--;
+//
+//   if (timeLeft.value < 0) {
+//     clearInterval(intervalId);
+//     timeLeft.value = 0;
+//
+//     gameStore.buyTicket(0);
+//     gameStore.setRoundStart();
+//   }
+// }, 1000);
+
 const handleTicketClick = (ticketNumber: number) => {
+  // clearInterval(intervalId);
+
   gameStore.buyTicket(ticketNumber);
+
   gsap.to(`.ticket:nth-child(${ticketNumber})`, {
     scale: 0,
     alpha: 0,
@@ -19,17 +38,24 @@ const handleTicketClick = (ticketNumber: number) => {
 </script>
 
 <template>
-  <div class="tickets-purchase">
-    <div class="title">
-      <div>Select a ticket</div>
-      <div>Ticket cost: {{ currencyFormat(gameStore.ticketPrice) }}</div>
-    </div>
-    <div class="container">
-      <div v-for="i in 10" :key="`ticket-${i}`" class="ticket" @click="handleTicketClick(i)">
-        {{ i }}
+  <Transition name="main">
+    <div class="tickets-purchase">
+      <div class="title">
+        <div>Select a ticket</div>
+        <div>Ticket cost: {{ currencyFormat(gameStore.ticketPrice) }}</div>
+        <div class="timer">{{ timeLeft }}</div>
+      </div>
+      <div class="container">
+        <TheTicket
+          v-for="i in 10"
+          :key="`ticket-${i}`"
+          class="ticket"
+          :ticket-number="i"
+          @click="handleTicketClick(i)"
+        />
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style scoped>
@@ -38,36 +64,65 @@ const handleTicketClick = (ticketNumber: number) => {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 100%;
+  /*height: 100%;*/
 
   .title {
+    position: relative;
     text-align: center;
 
     div:first-child {
       font-size: 2em;
       font-weight: bold;
     }
+
+    .timer {
+      font-size: 2em;
+      font-weight: bold;
+      position: absolute;
+      right: 16px;
+      top: 24px;
+    }
   }
 
   .container {
+    /*display: flex;
+    flex-wrap: wrap;
+    row-gap: 16px;
+    justify-content: space-between;*/
+    column-gap: 10px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(2, 110px);
+    grid-template-rows: repeat(2, 1fr);
     padding: 32px;
-    column-gap: 10px;
     row-gap: 15px;
 
     .ticket {
-      /* background-color: var(--primary-color); */
-      background-image: url('img/ticket.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      color: #240046;
-      text-align: center;
-      font-size: 2em;
-      font-weight: bold;
       cursor: pointer;
-      align-content: center;
+      font-size: 2em;
+      /*width: 220px;
+      height: 120px;*/
+    }
+  }
+
+  @media (max-width: 840px) {
+    .container {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      padding: 0 32px;
+    }
+  }
+
+  @media (max-width: 756px) {
+    .container {
+      grid-template-rows: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 590px) {
+    .container {
+      grid-template-rows: repeat(5, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 }

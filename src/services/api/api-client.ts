@@ -11,9 +11,15 @@ const getApiClient = () => {
     },
     '/round': {
       post: (data) => {
+        const randTicket = (Math.random() * 10 + 1) | 0;
+        if (!data.ticketNumber) {
+          return Promise.resolve({ ticketNumber: randTicket, balance, winAmount: 0 })
+        }
+
         const request = data as BuyTicketRequest;
+        // make 50% win rate
         const ticketNumber =
-          Math.random() > 0.6 ? request.ticketNumber : (Math.random() * 10 + 1) | 0;
+          Math.random() > 0.6 ? request.ticketNumber : randTicket;
 
         return Promise.resolve(
           ticketNumber === request.ticketNumber

@@ -63,7 +63,7 @@
 }
 
 body {
-  min-height: 100vh;
+  min-height: 99vh;
   color: var(--primary-color);
   background: #f2f2f2;
   transition:

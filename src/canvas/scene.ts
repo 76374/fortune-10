@@ -66,10 +66,15 @@ const getScene = () => {
     },
     stop,
 
+    resize: (width: number, height: number) => {
+      renderer?.resize(width, height);
+    },
+
     destroy: () => {
       stop();
       updated.removeAll();
       renderer?.destroy();
+      renderer = null;
       stage.destroy();
     }
   };

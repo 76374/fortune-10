@@ -41,7 +41,9 @@ onMounted(() => {
         @complete="handleRoundAnimationComplete"
       />
       <CanvasLayer />
-      <TicketsPurchase v-if="gameStore.state === 'ticketsPurchase' || gameStore.state === 'ticketSelected'" />
+      <Transition name="tickets">
+        <TicketsPurchase v-if="gameStore.state === 'ticketsPurchase' || gameStore.state === 'ticketSelected'" />
+      </Transition>
     </div>
   </div>
 </template>
@@ -52,7 +54,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 500px;
-  width: 1200px;
+  width: min(99vw, 1200px);
 
   .game-area {
     position: relative;
@@ -60,5 +62,21 @@ onMounted(() => {
     text-align: center;
     align-content: center;
   }
+}
+
+@media (max-width: 756px) {
+  .game {
+    height: 99vh;
+  }
+}
+
+.tickets-enter-active,
+.tickets-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.tickets-enter-from,
+.tickets-leave-to {
+  opacity: 0;
 }
 </style>
