@@ -9,20 +9,20 @@ const gameStore = useGameStore();
 
 const timeLeft = ref(15);
 
-// const intervalId = setInterval(() => {
-//   timeLeft.value--;
-//
-//   if (timeLeft.value < 0) {
-//     clearInterval(intervalId);
-//     timeLeft.value = 0;
-//
-//     gameStore.buyTicket(0);
-//     gameStore.setRoundStart();
-//   }
-// }, 1000);
+const intervalId = setInterval(() => {
+  timeLeft.value--;
+
+  if (timeLeft.value < 0) {
+    clearInterval(intervalId);
+    timeLeft.value = 0;
+
+    gameStore.buyTicket(0);
+    gameStore.setRoundStart();
+  }
+}, 1000);
 
 const handleTicketClick = (ticketNumber: number) => {
-  // clearInterval(intervalId);
+  clearInterval(intervalId);
 
   gameStore.buyTicket(ticketNumber);
 
@@ -38,33 +38,30 @@ const handleTicketClick = (ticketNumber: number) => {
 </script>
 
 <template>
-  <Transition name="main">
-    <div class="tickets-purchase">
-      <div class="title">
-        <div>Select a ticket</div>
-        <div>Ticket cost: {{ currencyFormat(gameStore.ticketPrice) }}</div>
-        <div class="timer">{{ timeLeft }}</div>
-      </div>
-      <div class="container">
-        <TheTicket
-          v-for="i in 10"
-          :key="`ticket-${i}`"
-          class="ticket"
-          :ticket-number="i"
-          @click="handleTicketClick(i)"
-        />
-      </div>
+  <div class="tickets-purchase">
+    <div class="title">
+      <div>Select a ticket</div>
+      <div>Ticket cost: {{ currencyFormat(gameStore.ticketPrice) }}</div>
+      <div class="timer">{{ timeLeft }}</div>
     </div>
-  </Transition>
+    <div class="container">
+      <TheTicket
+        v-for="i in 10"
+        :key="`ticket-${i}`"
+        class="ticket"
+        :ticket-number="i"
+        @click="handleTicketClick(i)"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .tickets-purchase {
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   position: absolute;
   top: 0;
   width: 100%;
-  /*height: 100%;*/
 
   .title {
     position: relative;
@@ -85,10 +82,6 @@ const handleTicketClick = (ticketNumber: number) => {
   }
 
   .container {
-    /*display: flex;
-    flex-wrap: wrap;
-    row-gap: 16px;
-    justify-content: space-between;*/
     column-gap: 10px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -99,8 +92,6 @@ const handleTicketClick = (ticketNumber: number) => {
     .ticket {
       cursor: pointer;
       font-size: 2em;
-      /*width: 220px;
-      height: 120px;*/
     }
   }
 

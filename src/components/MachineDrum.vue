@@ -54,7 +54,6 @@ defineExpose({
     //   },
     //   '<'
     // );
-    ticketVisible.value = true;
   },
 });
 </script>
