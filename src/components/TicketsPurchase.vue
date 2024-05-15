@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import TheTicket from '@/components/TheTicket.vue';
-import useGameStore from '@/composables/store';
 import { gsap } from 'gsap';
 import { ref } from 'vue';
 import currencyFormat from '../services/format/currency-format';
 
-const gameStore = useGameStore();
+const props = defineProps<{ ticketPrice: number }>();
+
+const emit = defineEmits<{
+  (e: 'completed'): void;
+  (e: 'selected', ticketNumber: number): void;
+}>();
 
 const timeLeft = ref(15);
 
@@ -16,22 +20,27 @@ const intervalId = setInterval(() => {
     clearInterval(intervalId);
     timeLeft.value = 0;
 
-    gameStore.buyTicket(0);
-    gameStore.setRoundStart();
+    emit('selected', 0);
+    emit('completed');
+
+    // gameStore.buyTicket(0);
+    // gameStore.setRoundStart();
   }
 }, 1000);
 
 const handleTicketClick = (ticketNumber: number) => {
   clearInterval(intervalId);
 
-  gameStore.buyTicket(ticketNumber);
+  emit('selected', ticketNumber);
+  // gameStore.buyTicket(ticketNumber);
 
   gsap.to(`.ticket:nth-child(${ticketNumber})`, {
     scale: 0,
     alpha: 0,
     duration: 0.4,
     onComplete: () => {
-      gameStore.setRoundStart();
+      // gameStore.setRoundStart();
+      emit('completed');
     },
   });
 };
@@ -41,7 +50,7 @@ const handleTicketClick = (ticketNumber: number) => {
   <div class="tickets-purchase">
     <div class="title">
       <div>Select a ticket</div>
-      <div>Ticket cost: {{ currencyFormat(gameStore.ticketPrice) }}</div>
+      <div>Ticket cost: {{ currencyFormat(props.ticketPrice) }}</div>
       <div class="timer">{{ timeLeft }}</div>
     </div>
     <div class="container">

@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import StoreProvider from "@/components/StoreProvider.vue";
-import TheGame from "@/components/TheGame.vue";
+import TheGame from '@/components/TheGame.vue';
 </script>
 
 <template>
   <main>
-    <StoreProvider>
-      <TheGame />
-    </StoreProvider>
+    <TheGame />
   </main>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

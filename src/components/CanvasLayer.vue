@@ -3,9 +3,19 @@ import getParticles from '@/canvas/particles';
 import getScene from '@/canvas/scene';
 import getTicketResultAnimation from '@/canvas/ticket-result-animation';
 import getWinPopup from '@/canvas/win-popup';
-import useGameStore from '@/composables/store';
 import currencyFormat from '@/services/format/currency-format';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
+export type CanvasState = 'none' | 'win' | 'lose';
+
+const props = defineProps<{
+  state: CanvasState;
+  winAmount: number;
+}>();
+
+const emit = defineEmits<{
+  (e: 'animation-completed'): void;
+}>();
 
 const canvasContainer = ref<HTMLElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -19,23 +29,22 @@ const winPopup = getWinPopup(scene.stage, particles);
 
 const ticketResultAnimation = getTicketResultAnimation(scene.stage, particles);
 
-const gameStore = useGameStore();
-
 watch(
-  () => gameStore.state,
-  (state, prevState) => {
+  () => props.state,
+  (state) => {
     if (state === 'win') {
       scene.start();
 
       ticketResultAnimation.playWin();
 
-      setTimeout(() => winPopup.show(currencyFormat(gameStore.winAmount, false)), 1000);
+      setTimeout(() => winPopup.show(currencyFormat(props.winAmount, false)), 1000);
 
-      setTimeout(() => gameStore.setReady(), 3000);
-    } else if (state === 'roundReady' && prevState === 'resultsReady') {
+      setTimeout(() => emit('animation-completed'), 3000);
+    } else if (state === 'lose') {
       scene.start();
       ticketResultAnimation.playLose();
-    } else if (state === 'ticketsPurchase') {
+      setTimeout(() => emit('animation-completed'), 1500);
+    } else if (state === 'none') {
       winPopup.hide();
       // keep one frame to hide stuff
       requestAnimationFrame(scene.stop);

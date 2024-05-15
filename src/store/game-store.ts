@@ -9,12 +9,14 @@ export type GameState =
   | 'ticketSelected'
   | 'roundStart'
   | 'resultsReady'
-  | 'win';
+  | 'win'
+  | 'lose';
 
-export type GameStore = Readonly<typeof gameStore>;
+export type GameStore = Omit<Readonly<ReturnType<typeof getGameStore>>, 'setState'>;
 
-const gameStore = reactive({
+const getGameStore = () => reactive({
   state: 'none' as GameState,
+  prevState: 'none' as GameState,
   balance: 0,
   ticketPrice: 0,
   selectedTicket: 0,
@@ -22,13 +24,18 @@ const gameStore = reactive({
   winAmount: 0,
   resultTicketNumber: 0,
 
+  setState(value: GameState) {
+    this.prevState = this.state;
+    this.state = value;
+  },
+
   init() {
     return api.init().then((result) => {
       currencyFormat.setCurrency(result.currency);
 
       this.balance = result.balance;
       this.ticketPrice = result.ticketPrice;
-      this.state = 'roundReady';
+      this.setState('roundReady');
 
       return result;
     });
@@ -36,7 +43,7 @@ const gameStore = reactive({
 
   purchaseTickets() {
     this.selectedTicket = 0;
-    this.state = 'ticketsPurchase';
+    this.setState('ticketsPurchase');
   },
 
   buyTicket(ticketNumber: number) {
@@ -47,7 +54,7 @@ const gameStore = reactive({
     if (ticketNumber) {
       this.balance -= this.ticketPrice;
     }
-    this.state = 'ticketSelected';
+    this.setState('ticketSelected');
 
     return api.startRound(ticketNumber).then((result) => {
       this.postRoundBalance = result.balance;
@@ -63,13 +70,13 @@ const gameStore = reactive({
   },
 
   setResult() {
-    this.state = this.winAmount ? 'win' : 'roundReady';
+    this.state = this.winAmount ? 'win' : 'lose';
     this.balance = this.postRoundBalance;
   },
 
   setReady() {
-    this.state = 'roundReady';
+    this.setState('roundReady');
   },
 });
 
-export default gameStore;
+export default getGameStore as () => GameStore;

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import TheTicket from '@/components/TheTicket.vue';
-import useGameStore from '@/composables/store';
 import { gsap } from 'gsap';
 import CustomEase from 'gsap/CustomEase';
-import { computed, ref, watch } from 'vue';
+import { ref } from "vue";
 
 const spinTime = 2;
 const spinRotations = 2;
@@ -11,23 +10,22 @@ const ticketFlyTime = 0.7;
 
 const props = defineProps<{
   ticketNumber: number;
+  // hideTicket: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'complete'): void;
 }>();
 
-const gameStore = useGameStore();
-
 const ticketVisible = ref(false);
-watch(
-  () => gameStore.state,
-  (state) => {
-    if (state === 'ticketsPurchase') {
-      ticketVisible.value = false;
-    }
-  }
-);
+// watch(
+//   () => gameStore.state,
+//   (state) => {
+//     if (state === 'ticketsPurchase') {
+//       ticketVisible.value = false;
+//     }
+//   }
+// );
 
 defineExpose({
   spin: () => {
@@ -35,9 +33,9 @@ defineExpose({
     gsap.to('.drum polygon', {
       rotation: 360 * spinRotations,
       duration: spinTime,
-      onComplete() {
-        ticketVisible.value = true;
-      },
+      // onComplete() {
+      //   ticketVisible.value = true;
+      // },
     });
     gsap.from('.result-ticket', {
       scale: 0,
@@ -47,7 +45,14 @@ defineExpose({
       ease: 'power1.in',
       delay: spinTime,
 
-      onComplete: () => emit('complete'),
+      onStart() {
+        console.log("onStart")
+
+        ticketVisible.value = true;
+      },
+      onComplete() {
+        emit('complete')
+      },
     });
     gsap.from('.result-ticket-container', {
       y: -80,
@@ -59,6 +64,11 @@ defineExpose({
       ),
     });
   },
+
+  hideTicket: () => {
+    console.log("hide")
+    ticketVisible.value = false;
+  }
 });
 </script>
 
@@ -86,7 +96,11 @@ defineExpose({
     <circle r="12" fill="#3c096c" cx="142" cy="179" stroke="#faa275" />
   </svg>
   <div class="result-ticket-container">
-    <TheTicket v-show="ticketVisible" class="result-ticket" :ticket-number="props.ticketNumber" />
+    <TheTicket
+      v-show="ticketVisible"
+      class="result-ticket"
+      :ticket-number="props.ticketNumber"
+    />
   </div>
 </template>
 
@@ -97,7 +111,7 @@ defineExpose({
   left: 50%;
   transform: translate(-50%, -50%) scale(1.4);
 
-  [data-id=drum] {
+  [data-id='drum'] {
     transform-origin: 70px 61px;
   }
 }

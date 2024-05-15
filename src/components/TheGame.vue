@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import CanvasLayer from '@/components/CanvasLayer.vue';
+import CanvasLayer, { CanvasState } from '@/components/CanvasLayer.vue';
 import GamePanel from '@/components/GamePanel.vue';
 import MachineDrum from '@/components/MachineDrum.vue';
 import TicketsPurchase from '@/components/TicketsPurchase.vue';
-import useGameStore from '@/composables/store';
-import { onMounted, ref, watch } from 'vue';
+import getGameStore from '@/store/game-store';
+import { computed, onMounted, ref, watch } from 'vue';
 
-const gameStore = useGameStore();
+const gameStore = getGameStore();
 
 const drumRef = ref<InstanceType<typeof MachineDrum> | null>(null);
+
+const canvasState = computed<CanvasState>(() => {
+  console.log(gameStore.state, gameStore.prevState)
+  return gameStore.state === 'roundReady' && gameStore.prevState === 'win'
+    ? 'win'
+    : gameStore.state === 'win' || gameStore.state === 'lose'
+      ? gameStore.state
+      : 'none'
+});
 
 watch(
   () => gameStore.state,
   (state, prevState) => {
-    if (
-      drumRef.value &&
-      (state === 'roundStart' || (state === 'resultsReady' && prevState === 'ticketSelected'))
-    ) {
-      drumRef.value.spin();
+    if (state === 'roundStart' || (state === 'resultsReady' && prevState === 'ticketSelected')) {
+      drumRef.value?.spin();
+    } else if (state === 'ticketsPurchase') {
+      drumRef.value?.hideTicket();
     }
   }
 );
-
-const handleRoundAnimationComplete = () => {
-  gameStore.setResult();
-};
 
 onMounted(() => {
   gameStore.init();
@@ -33,16 +37,30 @@ onMounted(() => {
 
 <template>
   <div class="game">
-    <GamePanel />
+    <GamePanel
+      :balance="gameStore.balance"
+      :selected-ticket="gameStore.selectedTicket"
+      :show-select-ticket="gameStore.state === 'roundReady'"
+      @purchase-clicked="gameStore.purchaseTickets()"
+    />
     <div class="game-area">
       <MachineDrum
         ref="drumRef"
         :ticket-number="gameStore.resultTicketNumber"
-        @complete="handleRoundAnimationComplete"
+        @complete="gameStore.setResult()"
       />
-      <CanvasLayer />
+      <CanvasLayer
+        :state="canvasState"
+        :win-amount="gameStore.winAmount"
+        @animation-completed="gameStore.setReady()"
+      />
       <Transition name="tickets">
-        <TicketsPurchase v-if="gameStore.state === 'ticketsPurchase' || gameStore.state === 'ticketSelected'" />
+        <TicketsPurchase
+          v-if="gameStore.state === 'ticketsPurchase' || gameStore.state === 'ticketSelected'"
+          :ticket-price="gameStore.ticketPrice"
+          @selected="gameStore.buyTicket($event)"
+          @completed="gameStore.setRoundStart()"
+        />
       </Transition>
     </div>
   </div>
@@ -50,8 +68,13 @@ onMounted(() => {
 
 <style scoped>
 .game {
-  background: rgb(48,0,74);
-  background: linear-gradient(90deg, rgba(48,0,74,1) 0%, rgba(192,76,197,1) 45%, rgba(48,0,74,1) 100%);
+  background: rgb(48, 0, 74);
+  background: linear-gradient(
+    90deg,
+    rgba(48, 0, 74, 1) 0%,
+    rgba(192, 76, 197, 1) 45%,
+    rgba(48, 0, 74, 1) 100%
+  );
   border: 1px solid var(--primary-color);
   display: flex;
   flex-direction: column;

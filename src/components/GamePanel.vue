@@ -1,27 +1,28 @@
 <script setup lang="ts">
 import TheTicket from '@/components/TheTicket.vue';
-import useGameStore from '@/composables/store';
 import currencyFormat from '../services/format/currency-format';
 
-const gameStore = useGameStore();
+const props = defineProps<{
+  balance: number;
+  showSelectTicket: boolean;
+  selectedTicket: number;
+}>();
 
-const handleTicketPurchase = () => {
-  gameStore.purchaseTickets();
-};
+const emit = defineEmits<{ (e: 'purchase-clicked'): void }>();
 </script>
 
 <template>
   <div class="panel">
-    <div class="balance">Balance: {{ currencyFormat(gameStore.balance) }}</div>
-    <button v-if="gameStore.state === 'roundReady'" class="buy-bt" @click="handleTicketPurchase">
+    <div class="balance">Balance: {{ currencyFormat(props.balance) }}</div>
+    <button v-if="props.showSelectTicket" class="buy-bt" @click="emit('purchase-clicked')">
       Select a ticket
     </button>
     <div class="ticket-container">
       <Transition name="ticket">
         <TheTicket
-          v-if="gameStore.selectedTicket"
+          v-if="props.selectedTicket"
           class="ticket"
-          :ticket-number="gameStore.selectedTicket"
+          :ticket-number="props.selectedTicket"
         />
       </Transition>
     </div>
