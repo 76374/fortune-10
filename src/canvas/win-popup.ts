@@ -5,7 +5,7 @@ import { Container, Graphics, Text, TextStyle, type TextStyleFontWeight } from '
 
 const winStyle: Partial<TextStyle> = {
   fontFamily: 'sans-serif',
-  fontWeight: '1000' as TextStyleFontWeight,
+  fontWeight: '900',
   fontSize: 180,
   align: 'center',
   fill: [0xffbf00, 16764736, 16768115, 0xffbf00],
