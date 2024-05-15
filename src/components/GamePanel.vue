@@ -41,8 +41,13 @@ const handleTicketPurchase = () => {
   }
 
   .buy-bt {
-    margin: 4px;
+    background-color: var(--primary-color);
+    border: 1px solid #faa275;
+    border-radius: 8px;
+    color: #f2f2f2;
+    cursor: pointer;
     font-size: 1.4em;
+    margin: 4px;
     padding: 4px 32px;
   }
 

@@ -13,7 +13,7 @@ const winStyle: Partial<TextStyle> = {
   fill: [0xffbf00, 16764736, 16768115, 0xffbf00],
   stroke: 0x3c096c,
   strokeThickness: 5,
-  dropShadowBlur: 20,
+  dropShadowBlur: 15,
   dropShadowColor: 0xffffff,
   dropShadow: true,
 };

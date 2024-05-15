@@ -2,12 +2,12 @@
 import TheTicket from '@/components/TheTicket.vue';
 import useGameStore from '@/composables/store';
 import { gsap } from 'gsap';
-// import CustomEase from 'gsap/CustomEase';
+import CustomEase from 'gsap/CustomEase';
 import { computed, ref, watch } from 'vue';
 
 const spinTime = 2;
 const spinRotations = 2;
-const ticketFlyTime = 0.8;
+const ticketFlyTime = 1;
 
 const props = defineProps<{
   ticketNumber: number;
@@ -19,28 +19,55 @@ const emit = defineEmits<{
 
 const gameStore = useGameStore();
 
-const ticketVisible = computed(
-  () => gameStore.state !== 'ticketsPurchase' && gameStore.state !== 'ticketSelected'
+// const ticketVisible = computed(
+//   () => gameStore.state !== 'ticketsPurchase' && gameStore.state !== 'ticketSelected'
+// );
+
+const ticketVisible = ref(false);
+watch(
+  () => gameStore.state,
+  (state) => {
+    if (state === 'ticketsPurchase') {
+      ticketVisible.value = false;
+    }
+  }
 );
 
 defineExpose({
   spin: () => {
     gsap.set('.drum polygon', { rotation: 0 });
-    gsap.to('.drum polygon', { rotation: 360 * spinRotations, duration: spinTime });
-    gsap.from(
-      '.result-ticket',
-      {
-        scale: 0,
-        rotation: 360 * 3,
-
-        y: -200,
-        alpha: 0,
-        duration: ticketFlyTime,
-        // ease: 'power1.in',
-
-        onComplete: () => emit('complete'),
+    gsap.to('.drum polygon', {
+      rotation: 360 * spinRotations,
+      duration: spinTime,
+      onComplete() {
+        ticketVisible.value = true;
       },
-      '>'
+    });
+    // gsap.set('.result-ticket', { y: 100 });
+    gsap.from('.result-ticket', {
+      scale: 0,
+      // rotation: 360 * 3,
+
+      // y: -200,
+      alpha: 0,
+      duration: ticketFlyTime,
+      rotateX: 180,
+      // ease: 'none',
+      ease: 'power1.in',
+      delay: spinTime,
+
+      onComplete: () => emit('complete'),
+    });
+    // gsap.set('[data-id=ticket-container]', { y: -200 });
+    gsap.from(
+      '[data-id=ticket-container]',
+      {
+        y: -80,
+        duration: ticketFlyTime,
+        delay: spinTime,
+        // ease: CustomEase.create("custom", "M0,0 C0.206,-0.273 0.22,-0.435 0.437,-0.426 0.679,-0.415 0.899,0.355 1,1"),
+        ease: CustomEase.create("custom", "M0,0 C0.059,-0.255 0.23,-0.85 0.5,-0.822 0.761,-0.794 0.95,0.388 1,1"),
+      }
     );
     // gsap.from(
     //   '.result-ticket',
@@ -80,7 +107,9 @@ defineExpose({
     <circle r="12" fill="#3c096c" cx="32" cy="179" stroke="#faa275" />
     <circle r="12" fill="#3c096c" cx="142" cy="179" stroke="#faa275" />
   </svg>
-  <TheTicket v-show="ticketVisible" class="result-ticket" :ticket-number="props.ticketNumber" />
+  <div data-id="ticket-container">
+    <TheTicket v-show="ticketVisible" class="result-ticket" :ticket-number="props.ticketNumber" />
+  </div>
 </template>
 
 <style scoped>

@@ -40,13 +40,13 @@ watch(
 );
 
 const handleClick = () => {
-  scene.start();
+  // scene.start();
 
   // particles.play('starsTop');
   // particles.play('starsBottom');
   // particles.play('starsLeft');
   // particles.play('starsRight');
-  winPopup.show();
+  // winPopup.show();
 };
 
 const getResize = (canvasEl: HTMLCanvasElement) => {

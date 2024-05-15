@@ -59,10 +59,11 @@ onMounted(() => {
   width: min(99vw, 1200px);
 
   .game-area {
-    position: relative;
-    flex-grow: 1;
-    text-align: center;
     align-content: center;
+    flex-grow: 1;
+    perspective: 800px;
+    position: relative;
+    text-align: center;
   }
 }
 

@@ -29,12 +29,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-button {
-  border-radius: 8px;
-  background-color: var(--primary-color);
-  color: #f2f2f2;
-  font-size: 1em;
-  padding: 8px;
-  cursor: pointer;
-}
